@@ -294,11 +294,19 @@ function simulateProcessing() {
   const logs = [
     `> Uploaded ${appState.uploadedFile || 'psr_draft.pdf'}...`,
     `> Scanning document structure (${Math.floor(Math.random() * 30) + 50} pages detected)...`,
+    `> Masking PII — redacting names, SSNs, and dates of birth...`,
     `> OCR Engine initializing (Engine v2.4-turbo)...`,
+    `> OCR pass complete — extracting raw text from all pages...`,
     `> Extracting Part A: Offense Conduct narrative...`,
+    `> Running data extraction — mapping fields to PSR schema...`,
     `> Calculating security scoring variables (1–29 scale)...`,
     `> Checking Public Safety Factors (PSFs)...`,
     `> Evaluating RDAP eligibility markers...`,
+    `> Building AI prompt from structured document data...`,
+    `> Structuring extracted data to JSON schema...`,
+    `> Applying AI rules for data quality and consistency...`,
+    `> Formatting AI results for report generation...`,
+    `> Validating output — cross-checking fields and scores...`,
     `> Processing complete. Formulating results...`,
   ];
 
