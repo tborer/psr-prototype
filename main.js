@@ -120,7 +120,6 @@ const modalViews = {
         <h3>Drag &amp; Drop your PSR here</h3>
         <p style="color:var(--text-muted); margin-top:0.5rem; margin-bottom:1.5rem;">PDF format · Up to 200MB</p>
         <button class="btn btn-outline" id="browse-btn">Browse Files</button>
-        <input type="file" id="file-input" class="hidden" accept=".pdf">
       </div>
     </div>
   `,
@@ -246,12 +245,9 @@ function attachModalListeners(viewName) {
 
   if (viewName === 'upload') {
     const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
 
-    document.getElementById('browse-btn').addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) handleUpload(e.target.files[0]);
+    document.getElementById('browse-btn').addEventListener('click', () => {
+      handleUpload({ name: 'psr_draft_doe_john.pdf' });
     });
 
     dropZone.addEventListener('dragover', (e) => {
@@ -262,7 +258,7 @@ function attachModalListeners(viewName) {
     dropZone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropZone.classList.remove('dragover');
-      if (e.dataTransfer.files.length > 0) handleUpload(e.dataTransfer.files[0]);
+      handleUpload({ name: e.dataTransfer.files[0]?.name || 'psr_draft_doe_john.pdf' });
     });
   }
 
