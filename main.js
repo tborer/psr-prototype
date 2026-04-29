@@ -145,8 +145,8 @@ const modalViews = {
           <div class="data-value">John A. Doe</div>
         </div>
         <div class="data-card">
-          <div class="data-label">Document Type</div>
-          <div class="data-value">Draft PSR</div>
+          <div class="data-label">Security Score</div>
+          <div class="data-value">14 / 29</div>
         </div>
         <div class="data-card">
           <div class="data-label">Confidence Score</div>
@@ -155,10 +155,6 @@ const modalViews = {
       </div>
 
       <div class="results-grid ${!appState.hasPaid ? 'blurred' : ''}">
-        <div class="data-card">
-          <div class="data-label">Security Score</div>
-          <div class="data-value">14 / 29</div>
-        </div>
         <div class="data-card">
           <div class="data-label">Designation Level</div>
           <div class="data-value">Medium</div>
