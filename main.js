@@ -4,6 +4,7 @@ let appState = {
   isLoggedIn: false,
   hasPaid: false,
   uploadedFile: null,
+  intakeForm: null,
 };
 
 // ─── Landing Page ──────────────────────────────────────────────────────────
@@ -113,13 +114,80 @@ const modalViews = {
   `,
 
   upload: () => `
-    <div class="view-enter" style="display:flex; flex-direction:column; align-items:center;">
-      <h2 style="margin-bottom:2rem;">Upload Your PSR Document</h2>
-      <div class="upload-zone" id="drop-zone">
-        <div class="upload-icon">📄</div>
-        <h3>Drag &amp; Drop your PSR here</h3>
-        <p style="color:var(--text-muted); margin-top:0.5rem; margin-bottom:1.5rem;">PDF format · Up to 200MB</p>
-        <button class="btn btn-outline" id="browse-btn">Browse Files</button>
+    <div class="upload-form-wrapper view-enter">
+      <p class="form-section-title">Client Information</p>
+      <div class="form-grid-2col">
+        <div class="input-group">
+          <label>First Name</label>
+          <input type="text" id="first-name" placeholder="John">
+        </div>
+        <div class="input-group">
+          <label>Last Name</label>
+          <input type="text" id="last-name" placeholder="Doe">
+        </div>
+      </div>
+      <div class="form-grid-2col" style="margin-bottom:1.25rem;">
+        <div class="input-group">
+          <label>Date of Birth</label>
+          <input type="date" id="dob">
+        </div>
+        <div class="input-group">
+          <label>SSN</label>
+          <input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11">
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-bottom:1.25rem;">
+        <label>PSR Status</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="psr-status" value="initial-draft" checked>
+            Initial Draft
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="psr-status" value="finalized">
+            Finalized PSR
+          </label>
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-bottom:1.25rem;">
+        <label>Primary Sentencing Goal</label>
+        <div class="checkbox-group">
+          <label class="checkbox-option">
+            <input type="checkbox" name="sentencing-goal" value="minimize-security">
+            Minimize Security Classification
+          </label>
+          <label class="checkbox-option">
+            <input type="checkbox" name="sentencing-goal" value="rdap">
+            Qualify for RDAP (Drug Program)
+          </label>
+          <label class="checkbox-option">
+            <input type="checkbox" name="sentencing-goal" value="first-step-act">
+            First Step Act Credits
+          </label>
+          <label class="checkbox-option">
+            <input type="checkbox" name="sentencing-goal" value="medical-compassionate">
+            Medical / Compassionate Designation
+          </label>
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-bottom:1.25rem;">
+        <label>Disputed Facts and/or External Context <span style="color:var(--text-muted); font-weight:400;">(optional)</span></label>
+        <textarea id="disputed-facts" placeholder="Are there any claims in this report you plan to dispute, or any external mitigating factors?"></textarea>
+      </div>
+
+      <hr class="upload-divider">
+
+      <div style="display:flex; flex-direction:column; align-items:center;">
+        <h2 style="margin-bottom:1.5rem;">Upload Your PSR Document</h2>
+        <div class="upload-zone" id="drop-zone">
+          <div class="upload-icon">📄</div>
+          <h3>Drag &amp; Drop your PSR here</h3>
+          <p style="color:var(--text-muted); margin-top:0.5rem; margin-bottom:1.5rem;">PDF format · Up to 200MB</p>
+          <button class="btn btn-outline" id="browse-btn">Browse Files</button>
+        </div>
       </div>
     </div>
   `,
@@ -242,7 +310,20 @@ function attachModalListeners(viewName) {
   if (viewName === 'upload') {
     const dropZone = document.getElementById('drop-zone');
 
+    function collectFormData() {
+      appState.intakeForm = {
+        firstName: document.getElementById('first-name').value,
+        lastName: document.getElementById('last-name').value,
+        dob: document.getElementById('dob').value,
+        ssn: document.getElementById('ssn').value,
+        psrStatus: document.querySelector('input[name="psr-status"]:checked')?.value || 'initial-draft',
+        sentencingGoals: [...document.querySelectorAll('input[name="sentencing-goal"]:checked')].map(el => el.value),
+        disputedFacts: document.getElementById('disputed-facts').value,
+      };
+    }
+
     document.getElementById('browse-btn').addEventListener('click', () => {
+      collectFormData();
       handleUpload({ name: 'psr_draft_doe_john.pdf' });
     });
 
@@ -254,6 +335,7 @@ function attachModalListeners(viewName) {
     dropZone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropZone.classList.remove('dragover');
+      collectFormData();
       handleUpload({ name: e.dataTransfer.files[0]?.name || 'psr_draft_doe_john.pdf' });
     });
   }
@@ -287,8 +369,17 @@ function handleUpload(file) {
 
 function simulateProcessing() {
   const terminal = document.getElementById('terminal');
+  const intake = appState.intakeForm || {};
+  const clientName = [intake.firstName, intake.lastName].filter(Boolean).join(' ') || 'client';
+  const psrStatusLabel = intake.psrStatus === 'finalized' ? 'Finalized PSR' : 'Initial Draft';
   const logs = [
     `> Uploaded ${appState.uploadedFile || 'psr_draft.pdf'}...`,
+    `> Obtained client name: ${clientName}...`,
+    `> Looking up SSN data...`,
+    `> Verifying DOB and client data...`,
+    `> Analyzing PSR Status: ${psrStatusLabel}...`,
+    `> Analyzing Sentencing Goal...`,
+    `> Analyzing Disputed Facts/External Context...`,
     `> Scanning document structure (${Math.floor(Math.random() * 30) + 50} pages detected)...`,
     `> Masking PII — redacting names, SSNs, and dates of birth...`,
     `> OCR Engine initializing (Engine v2.4-turbo)...`,
