@@ -3,20 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PSR Web App Mockup</title>
-    <!-- Google Fonts -->
+    <title>Prisonology App – AI-Powered PSR Analysis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="app">
-      <!-- Dynamic View Container -->
-      <main id="view-container">
-        <!-- Views will be injected here via main.js -->
-      </main>
 
-      <!-- Global Notifications/Toast Container -->
+      <header id="site-header">
+        <div class="header-inner">
+          <div class="logo">Prisonology App</div>
+          <nav class="header-nav">
+            <a href="#how-it-works">How It Works</a>
+            <a href="#psr-risk">The PSR Risk</a>
+            <a href="#pricing">Pricing</a>
+          </nav>
+          <div class="header-actions">
+            <button class="btn-text" id="sign-in-btn">Sign In</button>
+            <button class="btn btn-primary" id="header-cta-btn">Analyze a PSR</button>
+          </div>
+        </div>
+      </header>
+
+      <main id="view-container"></main>
+
+      <!-- Modal overlay for auth/upload flow -->
+      <div id="modal-overlay" class="hidden">
+        <div id="modal-inner">
+          <button id="modal-close-btn" aria-label="Close">✕</button>
+          <div id="modal-content"></div>
+        </div>
+      </div>
+
       <div id="toast-container"></div>
     </div>
     <script type="module" src="/main.js"></script>
